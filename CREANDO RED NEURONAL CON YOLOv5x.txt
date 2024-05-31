@@ -1,0 +1,35 @@
+CREANDO RED NEURONAL CON YOLOv5x
+
+1. Instalar las dependencias del proyecto
+!git clone https://github.com/ultralytics/yolov5  # clone
+%cd yolov5
+%pip install -qr requirements.txt comet_ml  # install
+
+import torch
+import utils
+display = utils.notebook_init()  # checks
+
+
+2. descomprimir carpeta de imagenes etiquetadas de carros data/
+!unzip -q /content/data.zip -d /content/
+
+
+3. código para entrenar la IA mediante las imagenes redimencionamos a 640 y batch 4 le damos a las epochs 50 para que tenga un buen aprendizaje
+
+!python train.py --img 640 --batch 4 --epochs 50 --data /content/yolov5/data/custom.yaml --weights yolov5x.pt --cache
+
+4.evaluar las métricasde de la red neuronal
+%load_ext tensorboard
+%tensorboard --logdir runs
+
+
+5. detección de los carros, con imágenes sabiendo el porcenstaje según la IA entrenada
+#Rastreado de imagen y evaluando segun confianza 10%
+!python detect.py --weights /content/yolov5/yolov5/runs/train/exp/weights/best.pt --img 640 --conf 0.1 --source "/content/camionet.jpg"
+display.Image(filename='/content/camionet.jpg', width=600)
+
+
+6. descargar el archivo best.pt
+#export your model's weights for future use
+from google.colab import files
+files.download('/content/yolov5/yolov5/runs/train/exp/weights/best.pt')
